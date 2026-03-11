@@ -6,6 +6,7 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { useMarketStore } from "@/lib/store";
 import { RefreshCw, WifiOff, Database, Globe } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
+import { generateMockCandles } from "@/lib/mockData";
 
 type ChartTimezone = 'ET' | 'UTC' | 'Local';
 
@@ -92,7 +93,7 @@ export function CandleChart() {
   const { timeframe, setTimeframe, timezone, setTimezone } = useMarketStore();
   const [status, setStatus] = useState<'loading' | 'connected' | 'error'>('loading');
   const [lastPrice, setLastPrice] = useState<number>(0);
-  const [dataSource, setDataSource] = useState<'live' | 'database' | 'bridge'>('database');
+  const [dataSource, setDataSource] = useState<'live' | 'database' | 'bridge' | 'demo'>('database');
   const [tzOpen, setTzOpen] = useState(false);
   const tzRef = useRef<HTMLDivElement>(null);
 
@@ -193,6 +194,21 @@ export function CandleChart() {
         }
       }
 
+      // 4) Final fallback: generate mock candlesticks for demo
+      if (bars.length === 0) {
+        const mockCandles = generateMockCandles(100);
+        bars = mockCandles.map(c => ({
+          time: shiftTimestamp(c.time, tz),
+          open: c.open,
+          high: c.high,
+          low: c.low,
+          close: c.close,
+          volume: c.volume,
+        }));
+        source = 'demo';
+        console.log(`[Chart] Loaded ${bars.length} mock candlesticks for demo`);
+      }
+
       if (bars.length > 0 && seriesRef.current) {
         const chartData = bars.map(bar => ({
           time: bar.time as UTCTimestamp,
@@ -205,7 +221,7 @@ export function CandleChart() {
         seriesRef.current.setData(chartData);
         setLastPrice(bars[bars.length - 1].close);
         setStatus('connected');
-        setDataSource(source === 'ibkr' ? 'live' : source === 'bridge' ? 'bridge' : 'database');
+        setDataSource(source === 'ibkr' ? 'live' : source === 'bridge' ? 'bridge' : source === 'demo' ? 'demo' : 'database');
 
         // Only fit content on first load (not during polling refreshes)
         if (!silent) {
@@ -369,8 +385,9 @@ export function CandleChart() {
 
   // REST polling fallback — refetch bars every 30s so chart updates even without WebSocket.
   // This is the primary mechanism for "live" candle development on delayed data.
+  // Disabled for demo mode to keep mock data static.
   useEffect(() => {
-    if (status !== 'connected') return;
+    if (status !== 'connected' || dataSource === 'demo') return;
 
     const pollInterval = setInterval(() => {
       console.log('[Chart] Polling for latest bars...');
@@ -378,10 +395,14 @@ export function CandleChart() {
     }, 30_000);
 
     return () => clearInterval(pollInterval);
-  }, [timeframe, fetchBars, status]);
+  }, [timeframe, fetchBars, status, dataSource]);
 
   // Subscribe to live tick updates from the Zustand store (fed by MarketDataClient WS)
+  // Disabled in demo mode to keep mock data static
   useEffect(() => {
+    // Skip tick subscription in demo mode
+    if (dataSource === 'demo') return;
+    
     // Reset live candle when timeframe changes
     currentCandleRef.current = null;
 
@@ -424,7 +445,7 @@ export function CandleChart() {
     });
 
     return unsub;
-  }, [timeframe]);
+  }, [timeframe, dataSource]);
 
   return (
     <div className="w-full h-full relative group">
