@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+:root {
+  /* Light Mode (Sophisticated Rose) */
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #F2F2F2;
+  --text-primary: #0A0A0B;
+  --text-muted: #64748B;   /* Slate 500 */
+  --border-subtle: #E2E8F0; /* Slate 200 */
+  --accent: #E11D48;       /* Rose 600 */
+  --accent-gold: #C5A059;   /* Refined Quartz Gold */
+  --accent-glow: rgba(225, 29, 72, 0.1);
+  --up: #E11D48;           /* Rose for Up */
+  --down: #475569;         /* Slate 600 for Down */
+  --depth-up: rgba(225, 29, 72, 0.1);
+  --depth-down: rgba(71, 85, 105, 0.1);
+}
+
+.dark {
+  /* Dark Mode (High-Performance Gold) */
+  --bg-primary: #050505;   /* Deep Dark */
+  --bg-secondary: #0D0D0E; /* Deep Panel */
+  --text-primary: #FFFFFF;
+  --text-muted: #94A3B8;   /* Slate 400 */
+  --border-subtle: #1E293B; /* Slate 800 */
+  --accent: #F59E0B;       /* Amber 500 (Golden) */
+  --accent-gold: #F59E0B;
+  --accent-glow: rgba(245, 158, 11, 0.15);
+  --up: #F59E0B;           /* Gold for Up */
+  --down: #334155;         /* Slate 700 for Down */
+  --depth-up: rgba(245, 158, 11, 0.15);
+  --depth-down: rgba(51, 65, 85, 0.15);
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(0.98); }
+}
+
+@keyframes loading {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s infinite ease-in-out;
+}
+
+@theme {
+  --color-quartz-bg: var(--bg-primary);
+  --color-quartz-panel: var(--bg-secondary);
+  --color-quartz-text: var(--text-primary);
+  --color-quartz-muted: var(--text-muted);
+  --color-quartz-border: var(--border-subtle);
+  --color-quartz-accent: var(--accent);
+  --color-quartz-gold: var(--accent-gold);
+  --color-quartz-up: var(--up);
+  --color-quartz-down: var(--down);
+  
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-display: var(--font-space-grotesk);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Hide Spinners in Chrome/Safari/Edge */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide Spinners in Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Frameless Window Utilities */
+.drag-region {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+button, [role="button"] {
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important;
+}
+button:focus, button:active, button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}

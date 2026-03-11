@@ -1,0 +1,10 @@
+.vercel
+.env*.local
+
+# next.js build
+.next/
+out/
+
+# tauri build outputs
+src-tauri/target/
+src-tauri/WixTools/

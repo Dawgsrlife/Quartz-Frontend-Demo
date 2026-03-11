@@ -1,0 +1,15 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm install
+
+COPY . .
+
+ARG NEXT_PUBLIC_BACKEND
+ENV NEXT_PUBLIC_BACKEND=$NEXT_PUBLIC_BACKEND
+ARG NEXT_PUBLIC_SIGNAL_WS
+ENV NEXT_PUBLIC_SIGNAL_WS=$NEXT_PUBLIC_SIGNAL_WS
+
+CMD ["npm", "run", "dev"]
