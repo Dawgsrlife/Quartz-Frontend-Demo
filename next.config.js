@@ -9,6 +9,7 @@ const nextConfig = {
     buildActivity: false,
     appIsrStatus: false,
   },
+  swcMinify: true,
 };
 
 module.exports = nextConfig;

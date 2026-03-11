@@ -14,6 +14,7 @@ import { TradeLog } from "@/components/backtest/TradeLog";
 import { PlaybackControls } from "@/components/backtest/PlaybackControls";
 import { BacktestHistory } from "@/components/backtest/BacktestHistory";
 import { useBacktestStore } from "@/lib/backtestStore";
+import { useHydrated } from "@/lib/useHydrated";
 
 /**
  * BacktestPage — US-14: Backtest UI Dashboard
@@ -42,13 +43,14 @@ import { useBacktestStore } from "@/lib/backtestStore";
  */
 export default function BacktestPage() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const hydrated = useHydrated();
     const [configCollapsed, setConfigCollapsed] = useState(() => {
         // Auto-collapse on smaller screens to prevent layout overflow
         if (typeof window !== "undefined") return window.innerWidth < 1280;
         return false;
     });
-    const status = useBacktestStore((s) => s.status);
-    const progress = useBacktestStore((s) => s.progress);
+    const status = hydrated ? useBacktestStore((s) => s.status) : "idle";
+    const progress = hydrated ? useBacktestStore((s) => s.progress) : 0;
 
     /* ---- Entrance animation ---- */
     useGSAP(() => {
